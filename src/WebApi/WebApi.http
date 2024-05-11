@@ -1,0 +1,11 @@
+@WebApi_HostAddress = http://localhost:5052
+
+PUT {{WebApi_HostAddress}}/newsletter/subscribe
+content-type: application/json
+Accept: application/json
+
+{
+  "email": "toto@contoso.com"
+}
+
+###
