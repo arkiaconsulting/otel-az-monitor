@@ -16,7 +16,7 @@ builder.Services.AddMetrics()
     .AddSingleton<WebApiMetrics>();
 
 // Configures the logging for the WebApi
-builder.Logging.ConfigureWebApiLogging();
+builder.Logging.ConfigureWebApiLogging(builder.Environment);
 
 var app = builder.Build();
 

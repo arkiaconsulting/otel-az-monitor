@@ -1,4 +1,4 @@
-@WebApi_HostAddress = http://localhost:5052
+@WebApi_HostAddress = https://localhost:7121
 
 PUT {{WebApi_HostAddress}}/newsletter/subscribe
 content-type: application/json
