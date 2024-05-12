@@ -24,7 +24,7 @@ internal static class LoggingConfigurationExtensions
                     ])
                 );
 
-                logging.AddConsoleExporter();
+                logging.AddOtlpExporter();
             });
 
         loggingBuilder.Services.AddOpenTelemetry()
@@ -33,12 +33,12 @@ internal static class LoggingConfigurationExtensions
             {
                 tracing.SetSampler<AlwaysOnSampler>();
                 tracing.AddAspNetCoreInstrumentation();
-                tracing.AddConsoleExporter();
+                tracing.AddOtlpExporter();
             })
             .WithMetrics(metrics =>
             {
                 metrics.AddMeter(WebApiMetrics.MeterName);
-                metrics.AddConsoleExporter();
+                metrics.AddOtlpExporter();
             });
     }
 }
