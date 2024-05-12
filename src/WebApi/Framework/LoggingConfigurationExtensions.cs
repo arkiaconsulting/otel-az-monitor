@@ -34,6 +34,7 @@ internal static class LoggingConfigurationExtensions
                 tracing.SetSampler<AlwaysOnSampler>();
                 tracing.AddAspNetCoreInstrumentation();
                 tracing.AddOtlpExporter();
+                tracing.AddSource(DiagnosticsConfig.SourceName);
             })
             .WithMetrics(metrics =>
             {

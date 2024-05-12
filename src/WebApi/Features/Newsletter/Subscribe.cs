@@ -17,6 +17,9 @@ internal static class EndpointExtensions
             [FromServices] ILoggerFactory loggerFactory,
             [FromServices] WebApiMetrics metrics) =>
         {
+            using var activity = DiagnosticsConfig.Source.StartActivity(DiagnosticsNames.NewsletterSubscriptionHttpHandler);
+            activity?.SetTag(DiagnosticsNames.NewsletterSubscriptionEmail, request.Email);
+
             var logger = loggerFactory.CreateLogger("SubscribeNewsletter.Http");
             logger.LogInformation("Handling HTTP request {Email}", request.Email);
 
@@ -57,6 +60,8 @@ internal sealed record SubscribeNewsletterCommand(string Email) : IRequest
 
         public async Task Handle(SubscribeNewsletterCommand request, CancellationToken cancellationToken)
         {
+            using var activity = DiagnosticsConfig.Source.StartActivity(DiagnosticsNames.NewsletterSubscriptionCommandHandler);
+
             _logger.LogInformation("Handling command {Email}", request.Email);
 
             await _store.Add(new(request.Email));
@@ -92,6 +97,8 @@ internal sealed class InMemoryNewsletterSubscriptionStore : IStoreNewsletterSubs
 
     public Task Add(NewsletterSubscriptionEmail email)
     {
+        using var activity = DiagnosticsConfig.Source.StartActivity(DiagnosticsNames.NewsletterSubscriptionStoreEmail);
+
         _logger.LogInformation("Adding newsletter subscription email {Email}", email.Value);
 
         _newsletterSubscriptionEmails.Add(email);
