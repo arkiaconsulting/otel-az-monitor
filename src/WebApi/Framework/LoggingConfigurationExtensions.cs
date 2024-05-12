@@ -1,4 +1,5 @@
-﻿using OpenTelemetry.Logs;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -23,23 +24,28 @@ internal static class LoggingConfigurationExtensions
                         new KeyValuePair<string, object>("environment", environment.EnvironmentName)
                     ])
                 );
-
-                logging.AddOtlpExporter();
             });
 
-        loggingBuilder.Services.AddOpenTelemetry()
+        var otelBuilder = loggingBuilder.Services.AddOpenTelemetry()
             .ConfigureResource(resource => resource.AddService(serviceName))
             .WithTracing(tracing =>
             {
                 tracing.SetSampler<AlwaysOnSampler>();
                 tracing.AddAspNetCoreInstrumentation();
-                tracing.AddOtlpExporter();
                 tracing.AddSource(DiagnosticsConfig.SourceName);
             })
             .WithMetrics(metrics =>
             {
                 metrics.AddMeter(WebApiMetrics.MeterName);
-                metrics.AddOtlpExporter();
             });
+
+        if (environment.IsDevelopment())
+        {
+            otelBuilder.UseOtlpExporter();
+        }
+        else
+        {
+            otelBuilder.UseAzureMonitor();
+        }
     }
 }
